@@ -27,7 +27,6 @@ Start with [README.md](README.md) (what this is, headline results, how to run it
 | [Darshan: M2 preparation](docs/presentation/2026-10-16/M2_PREP.md) | Diarization, exact selected settings, board explanation and questions |
 | [Abhinav: M3 preparation](docs/presentation/2026-10-16/M3_PREP_ABHINAV.md) | ASR, Hinglish, evaluation and questions |
 | [Shrivaths: M4 preparation](docs/presentation/2026-10-16/M4_PREP_SHRIVATHS.md) | Report generation, guardrails, measured limitations and questions |
-| [Current team WhatsApp draft](docs/presentation/2026-10-16/WHATSAPP_MESSAGE.md) | Copy-ready message assigning preparation and playback responsibilities; not sent automatically |
 | [docs/team/WHATSAPP_MESSAGE.md](docs/team/WHATSAPP_MESSAGE.md) | The message that split the mid-sem review tasks (sent; kept as written) |
 | [docs/team/RED_TEAM_AUDIT_PROMPT.md](docs/team/RED_TEAM_AUDIT_PROMPT.md) | Prompt for the independent audit (output → `audit/RED_TEAM_AUDIT.md`) |
 | [docs/team/EMAIL_TO_PROFESSOR.md](docs/team/EMAIL_TO_PROFESSOR.md) | Draft email flagging the two design decisions before the review |

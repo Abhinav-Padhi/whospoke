@@ -62,7 +62,7 @@ Our proposed next steps are to improve Hindi speaker embeddings, evaluate a larg
 
 - Vismay presents M1, then hands over on slide 1. Darshan presents M2 and narrates the M3/M4 results. Abhinav and Shrivaths answer questions about their stages.
 - Play only the two embedded separation clips during the talk. Their combined duration is 15 seconds. The older 18-second main clip is optional practice material, not part of this script.
-- Vismay owns the phone fallback: prepare and test both downloaded clips on Darshan's phone before the talk, keep them ready in A-then-B order, and handle playback if the PC fails. See your section in [TEAM_QA.md](TEAM_QA.md) for the checklist.
+- Vismay owns the phone fallback: prepare and test both downloaded clips on Darshan's phone before the talk, keep them ready in A-then-B order, and handle playback if the PC fails. See [your M1 guide, section 10](M1_PREP_VISMAY.md#10-your-job-phone-audio-backup) for the checklist.
 - If you exceed four minutes, omit the sentence comparing GMM and pyannote, and shorten the output-format list to “text and subtitles.” Keep the result limitations.
 - The PDF is a static backup: audio does not play in it.
 - Say “error,” not “accuracy.” Say “simulated conversations made from real speech,” not “72 real conversations.”

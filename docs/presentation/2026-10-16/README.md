@@ -11,8 +11,6 @@ Team **vismAI**. Three slides, 3–4 minutes. Vismay and Darshan present; all fo
 | [vismAI.pptx](vismAI.pptx) | Editable presentation with two embedded separation clips, embedded fonts and speaker notes |
 | [vismAI.pdf](vismAI.pdf) | Static backup; audio does not play in the PDF |
 | [SCRIPT.md](SCRIPT.md) | Timed speaking script, handoff and phone-playback cues |
-| [START_HERE.md](START_HERE.md) | Preparation order and corrections to older materials |
-| [WHATSAPP_MESSAGE.md](WHATSAPP_MESSAGE.md) | Team coordination message to copy and send |
 
 ## Study your own milestone
 
@@ -25,7 +23,11 @@ Each guide starts with ELI5, then covers the implementation, actual outputs, res
 | Abhinav | [M3_PREP_ABHINAV.md](M3_PREP_ABHINAV.md) | Transcription and Hinglish questions |
 | Shrivaths | [M4_PREP_SHRIVATHS.md](M4_PREP_SHRIVATHS.md) | LLM report and guardrail questions |
 
-[TEAM_QA.md](TEAM_QA.md) is a shared quick reference, not required reading across every stage. Darshan should read M2 sections 1–5, practise the section-6 board explanation, rehearse the M2 questions, and then practise his speaking script with Vismay.
+Darshan should read M2 sections 1–5, practise the section-6 board explanation, rehearse the M2 questions, and then practise his speaking script with Vismay. Each other member follows the same structure in their own guide.
+
+## What belongs in this package
+
+This directory contains only the presentation, static backup, speaking script, four individual guides and this index. The guides already contain stage-specific Q&A and corrections to older material. Combined Q&A, duplicate start-here notes and the WhatsApp coordination draft are local conveniences, not maintained repository documents. Existing audio clips are linked below rather than duplicated. Build intermediates and local delivery copies stay out of Git.
 
 ## Phone-audio fallback: Vismay owns it
 
