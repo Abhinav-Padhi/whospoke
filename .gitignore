@@ -36,3 +36,8 @@ results/eval_postprocess_summary.json
 
 # Demo-video fonts and audio cache (docs/presentation/demo-video/make_demo_video.py)
 docs/presentation/demo-video/.fonts/
+
+# Local presentation build intermediates and delivery copies.
+# The maintained team package is docs/presentation/2026-10-16/.
+/.codex-build/
+/output/flash-talk/

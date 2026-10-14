@@ -21,13 +21,32 @@ Start with [README.md](README.md) (what this is, headline results, how to run it
 
 | File | Purpose |
 |---|---|
-| [docs/presentation/](docs/presentation/README.md) | **Midsem flash talk (6 Oct):** the submitted deck (`vismAI.pptx`, with playable audio), its script and an explainer of every line; plus the first version |
+| [Current presentation package](docs/presentation/2026-10-16/README.md) | **16 October, 11:00 AM:** three-slide PPT, PDF, script, individual preparation and phone-audio fallback |
+| [Presentation index and archive](docs/presentation/README.md) | Current package and preserved October 6 presentation versions |
+| [Vismay: M1 preparation](docs/presentation/2026-10-16/M1_PREP_VISMAY.md) | Separation, board explanation, questions and phone-audio responsibility |
+| [Darshan: M2 preparation](docs/presentation/2026-10-16/M2_PREP.md) | Diarization, exact selected settings, board explanation and questions |
+| [Abhinav: M3 preparation](docs/presentation/2026-10-16/M3_PREP_ABHINAV.md) | ASR, Hinglish, evaluation and questions |
+| [Shrivaths: M4 preparation](docs/presentation/2026-10-16/M4_PREP_SHRIVATHS.md) | Report generation, guardrails, measured limitations and questions |
+| [Current team WhatsApp draft](docs/presentation/2026-10-16/WHATSAPP_MESSAGE.md) | Copy-ready message assigning preparation and playback responsibilities; not sent automatically |
 | [docs/team/WHATSAPP_MESSAGE.md](docs/team/WHATSAPP_MESSAGE.md) | The message that split the mid-sem review tasks (sent; kept as written) |
 | [docs/team/RED_TEAM_AUDIT_PROMPT.md](docs/team/RED_TEAM_AUDIT_PROMPT.md) | Prompt for the independent audit (output → `audit/RED_TEAM_AUDIT.md`) |
 | [docs/team/EMAIL_TO_PROFESSOR.md](docs/team/EMAIL_TO_PROFESSOR.md) | Draft email flagging the two design decisions before the review |
 | [audit/RED_TEAM_AUDIT.md](audit/RED_TEAM_AUDIT.md) | The red-team audit: every finding with its evidence and status, and the 10 hardest examiner questions |
 | [notebooks/02_walkthrough.ipynb](notebooks/02_walkthrough.ipynb) | Run all four stages on one conversation, in Colab or locally |
 | [notebooks/01_benchmark.ipynb](notebooks/01_benchmark.ipynb) | Speed, memory and model-size benchmark of every stage (the proposal's "benchmarking notebook") |
+
+## Local only — not on GitHub
+
+`docs/explainers/` is git-ignored and stays on this machine only. It has plain-English explainers, one for each part of the pipeline:
+
+| File | Covers |
+|---|---|
+| `docs/explainers/stage1_separation.md` | Stage 1: pulling overlapping voices apart |
+| `docs/explainers/stage2_diarization.md` | Stage 2: who spoke when |
+| `docs/explainers/stage3_transcription.md` | Stage 3: speech to text |
+| `docs/explainers/stage4_llm_report.md` | Stage 4: the LLM report, its guardrails, and what it really achieves |
+| `docs/explainers/order_a_vs_b.md` | Why the order of the stages matters |
+| `docs/explainers/testing_and_metrics.md` | How we test and what the numbers mean |
 
 ## Code — `src/whospoke/`
 
@@ -38,7 +57,7 @@ Start with [README.md](README.md) (what this is, headline results, how to run it
 | `separation.py` | 1 | Conv-TasNet / SepFormer separation with windowing, gain fit and stitching |
 | `vad.py` | 2 | Where is anyone speaking? Where are two people speaking? (pyannote segmentation) |
 | `diarization.py` | 2 | Voice fingerprints → clusters → a who-spoke-when timeline (both orders) |
-| `clustering.py` | 2 | Spectral clustering and GMM, written from scratch, plus cluster clean-up |
+| `clustering.py` | 2 | Custom spectral/GMM workflows and cluster clean-up using SciPy and scikit-learn components |
 | `asr_backends.py` | 3 | IndicConformer and IndicWav2Vec speech recognisers |
 | `hinglish.py` | 3 | Devanagari → Hinglish (Latin) romaniser with an English-loanword lexicon |
 | `resources/loanwords.tsv` | 3 | 2,600 Devanagari → English spellings (hand-made + mined from Vaani *train*) |

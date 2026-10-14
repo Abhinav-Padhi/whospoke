@@ -1,4 +1,24 @@
-# Midsem flash talk — team vismAI
+# Presentations — team vismAI
+
+## Current: 16 October 2026, 11:00 AM
+
+**Start with the [current presentation package](2026-10-16/README.md).** It contains the three-slide output-focused deck, PDF backup, timed script and separate preparation guides.
+
+| Material | Link |
+|---|---|
+| PowerPoint with two embedded separation clips | [vismAI.pptx](2026-10-16/vismAI.pptx) |
+| Static PDF backup | [vismAI.pdf](2026-10-16/vismAI.pdf) |
+| Presenter script | [SCRIPT.md](2026-10-16/SCRIPT.md) |
+| Vismay: M1 and phone-audio fallback | [M1_PREP_VISMAY.md](2026-10-16/M1_PREP_VISMAY.md) |
+| Darshan: M2 | [M2_PREP.md](2026-10-16/M2_PREP.md) |
+| Abhinav: M3 | [M3_PREP_ABHINAV.md](2026-10-16/M3_PREP_ABHINAV.md) |
+| Shrivaths: M4 | [M4_PREP_SHRIVATHS.md](2026-10-16/M4_PREP_SHRIVATHS.md) |
+
+Each person prepares their own milestone. Vismay presents the opening and M1; Darshan takes over for M2 and narrates the remaining results. Abhinav and Shrivaths handle technical questions on their stages. Vismay owns the phone-audio fallback using Darshan's phone.
+
+## Historical archive: 6 October 2026
+
+The material below is retained at its original paths so existing links continue to work. Its date, script and playback instructions are historical. Use the current package above for the upcoming talk.
 
 Tuesday 6 October 2026, 4:00 PM, D-LT10. 3 to 4 minutes, 3 slides, 10 % of the course grade. Vismay presents slide 1
 and Darshan slides 2–3. Abhinav and Shrivaths stand with the team; all four must be there.

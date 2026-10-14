@@ -5,6 +5,9 @@ overlapping, code-switched audio.**
 CS F407 (Artificial Intelligence), BITS Pilani · Prof. Tirtharaj Dash
 Team: Darshan Rajagoli · Vismay · Abhinav Padhi · Shrivaths Prabhu
 
+**Presentation on 16 October 2026, 11:00 AM:** [current deck, script and individual prep guides](docs/presentation/2026-10-16/README.md).
+For earlier versions, see the [presentation archive and index](docs/presentation/README.md).
+
 Give it a recording of people talking over each other in Hindi and English, with a market or a village in the
 background, and it produces:
 
