@@ -2,7 +2,7 @@
 
 # Abhinav's Milestone 3 preparation
 
-Study your own stage. Read sections 1–5 first, practise the board explanation, then rehearse the questions. Darshan narrates the slide-2 results during the flash talk; you answer technical questions about M3. You do not need to study every other milestone.
+Study your own stage. Read sections 1–5 first, practise the board explanation, then rehearse the questions. Vismay narrates the slide-2 transcription results during the flash talk; you answer technical questions about M3. You do not need to study every other milestone.
 
 ## 1. Your job in one sentence
 
@@ -138,7 +138,7 @@ Write **WER = (S + D + I) / N** and explain each symbol. Add **21.0% vs 38.0%, 4
 5. [results/asr_comparison.csv](../../../results/asr_comparison.csv), [docs/DATASETS.md](../../DATASETS.md), [docs/RESULTS_TABLES.md](../../RESULTS_TABLES.md).
 6. [results/demo/transcript.json](../../../results/demo/transcript.json) and `transcript_hinglish.txt`.
 
-The older [docs/explainers/stage3_transcription.md](../../explainers/stage3_transcription.md) is useful for architecture details. Keep its recognition and romanisation percentages separate, and do not describe quiet-point splitting as guaranteed word-boundary detection.
+The older `docs/explainers/stage3_transcription.md` (local-only background) is useful for architecture details. Keep its recognition and romanisation percentages separate, and do not describe quiet-point splitting as guaranteed word-boundary detection.
 
 ## 9. Final self-test
 

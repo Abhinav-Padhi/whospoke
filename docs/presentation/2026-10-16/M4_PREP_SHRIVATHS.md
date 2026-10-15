@@ -2,7 +2,7 @@
 
 # Shrivaths's Milestone 4 preparation
 
-Study your own stage. Read sections 1–5 first, practise the board explanation, then rehearse the questions. Darshan narrates the report slide during the flash talk; you answer technical questions about M4. You do not need to study the other stages beyond knowing that they supply the transcript.
+Study your own stage. Read sections 1–5 first, practise the board explanation, then rehearse the questions. Vismay narrates the report output; Darshan delivers the closing during the flash talk; you answer technical questions about M4. You do not need to study the other stages beyond knowing that they supply the transcript.
 
 ## 1. Your job in one sentence
 
@@ -145,8 +145,8 @@ If asked about calls, draw several chunk boxes feeding synthesis. Do not say eve
 4. [scripts/eval_postprocess.py](../../../scripts/eval_postprocess.py), [results/eval_postprocess.csv](../../../results/eval_postprocess.csv) and [docs/RESULTS_TABLES.md](../../RESULTS_TABLES.md).
 5. [tests/test_llm_postprocess.py](../../../tests/test_llm_postprocess.py) for the checked failure cases.
 
-The older [docs/explainers/stage4_llm_report.md](../../explainers/stage4_llm_report.md) is useful background. Correct its loose claims: the model did propose four rejected actions, lexical grounding does not guarantee truth, and the workflow has two phases rather than always two calls. Do not infer that guardrails quantitatively improved accuracy without a measured no-guardrail comparison.
+The older `docs/explainers/stage4_llm_report.md` (local-only background) is useful background. Correct its loose claims: the model did propose four rejected actions, lexical grounding does not guarantee truth, and the workflow has two phases rather than always two calls. Do not infer that guardrails quantitatively improved accuracy without a measured no-guardrail comparison.
 
 ## 9. Final self-test
 
-Explain input versus output, why the LLM cannot recover missing audio, local serving, quantisation, chunking, structure versus truth, +0.9 versus pooled +1.0, 63 versus 72 conversations, and zero accepted versus zero proposed actions. Practise each in two sentences. You own these answers; Darshan only needs to narrate the slide's results.
+Explain input versus output, why the LLM cannot recover missing audio, local serving, quantisation, chunking, structure versus truth, +0.9 versus pooled +1.0, 63 versus 72 conversations, and zero accepted versus zero proposed actions. Practise each in two sentences. You own these answers; Vismay reads the report results from the script; Darshan delivers the proposed-next-steps closing.

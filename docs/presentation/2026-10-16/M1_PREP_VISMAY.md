@@ -2,7 +2,7 @@
 
 # Vismay's Milestone 1 preparation
 
-Study your own stage. Read sections 1–5 first, practise the board explanation, then use the questions for rehearsal. You present the opening and M1 on slide 1. Darshan takes over for M2. You also own the phone-audio fallback in section 10.
+Study your own stage. Read sections 1–5 first, practise the board explanation, then use the questions for rehearsal. You read the opening and M1 on slide 1, then return for the M3/M4 results paragraphs in the final script. Darshan handles M2, the main comparison and closing. Your technical Q&A preparation remains M1 only. You also own the phone-audio fallback in section 10.
 
 ## 1. Your job in one sentence
 
@@ -12,7 +12,7 @@ This is **speech separation**. Its output is audio, not words, timestamps or rea
 
 **Input:** mono audio sampled at 16 kHz. **Output:** two waveforms of the same length, represented as an array with shape `(2, T)`. The standalone command writes `separated_track_1.wav` and `separated_track_2.wav`.
 
-The clips on slide 1 are existing saved outputs, each about 7.5 seconds long, from 28.0–35.5 seconds of the demo conversation.
+Slide 1 plays the mixed input from 26.4–44.8 seconds first (about 18 seconds), then two saved separation outputs from 28.0–35.5 seconds (about 7.5 seconds each).
 
 ## 2. ELI5: pulling apart two voices
 
@@ -127,7 +127,7 @@ Finish with: “In Order B we apply this only around detected overlap. The measu
 4. [results/separation_dev_summary.csv](../../../results/separation_dev_summary.csv), [results/separation_test_summary.csv](../../../results/separation_test_summary.csv).
 5. [docs/RESULTS_TABLES.md](../../RESULTS_TABLES.md): matched comparison and oracle transcript experiments.
 
-The older [docs/explainers/stage1_separation.md](../../explainers/stage1_separation.md) is useful background. Correct its loose wording: the output is not guaranteed clean, eight-second processing is a wrapper setting, and separation is not universally proven to worsen all non-overlap audio.
+The older `docs/explainers/stage1_separation.md` (local-only background) is useful background. Correct its loose wording: the output is not guaranteed clean, eight-second processing is a wrapper setting, and separation is not universally proven to worsen all non-overlap audio.
 
 ## 9. Final self-test
 
@@ -135,13 +135,13 @@ Explain audio output versus text output, pretrained versus trained by the team, 
 
 ## 10. Your job: phone-audio backup
 
-**You own playback and the fallback using Darshan's phone.** Arrange access before the talk.
+**You own playback and the fallback using your own phone.** Download the files directly from the links below; you do not need Darshan to provide them or manage playback.
 
-1. Download [Speaker A clip](../demo-video/speaker_a.mp4) and [Speaker B clip](../demo-video/speaker_b.mp4) onto Darshan's phone and test them without internet.
-2. Keep them ready in A-then-B order. Each is about 7.5 seconds.
+1. Download [Mixed recording](../demo-video/whospoke_demo.mp4), [Speaker A clip](../demo-video/speaker_a.mp4) and [Speaker B clip](../demo-video/speaker_b.mp4) onto your own phone and test them without internet.
+2. Keep them ready in mixed-then-A-then-B order. The mixed clip is about 18 seconds; each separated clip is about 7.5 seconds.
 3. Check media volume, disconnect unintended Bluetooth audio and enable Do Not Disturb.
-4. Rehearse switching from the PC to the phone. If a microphone is available, test a suitable phone-speaker distance and volume.
+4. Save the script offline on your phone and keep the clips ready in a separate app. Rehearse switching to playback and returning to the script at **RESUME HERE**. If a microphone is available, test a suitable phone-speaker distance and volume.
 
-On slide 1, try the embedded clips first. If playback fails, say **“We'll play the same clips from the phone.”** Keep the slide visible, play A then B, and continue. Do not replay a clip that already succeeded. If the phone also fails, stop troubleshooting and continue with the visible outputs.
+On slide 1, try the embedded clips first. If playback fails, say **“We'll play the same clips from the phone.”** Keep the slide visible, play mixed input, then A, then B, and continue. Do not replay a clip that already succeeded. If the phone also fails, stop troubleshooting and continue with the visible outputs.
 
-The older `whospoke_demo.mp4` is optional backup material, not part of the timed script. Your standard opening, including the two clips, is in `SCRIPT.md`.
+All three clips are part of the final timed script (about 33 seconds total). Your standard opening, including all three clips, is in `SCRIPT.md`.

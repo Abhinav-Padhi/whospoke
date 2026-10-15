@@ -1,73 +1,88 @@
 [Package home](README.md) · [Presentation index](../README.md)
 
-# whospoke: flash-talk script
+# Final phone-reading script
 
-**Friday, 16 October 2026, 11:00 AM. Team vismAI.** Three slides, two presenters. Aim for about 3:40–3:55 including the two 7.5-second clips. Rehearse aloud; timing depends on your delivery. The bracketed directions are cues, not spoken words.
+**16 October 2026, 11:00 AM. Read the spoken paragraphs verbatim.** Headings and bracketed **DO NOT READ ALOUD** directions are instructions only. Both presenters save this script offline on their own phones, enlarge the text and enable Do Not Disturb. Vismay keeps the clips ready in a separate app on his own phone and returns to the marked RESUME paragraph after playback.
 
-## Slide 1: outputs from separation and diarization
+**Split:** Vismay opens and demonstrates M1, then narrates M3 and M4. Darshan explains M2, presents the Order A/B result and closes. Only prepare your own milestone for technical Q&A. Aim for 3:40–3:55 including about 33 seconds of clips; confirm with one timed rehearsal.
 
-### Vismay: 0:00–1:00, including 15 seconds of audio
+## Slide 1 — Vismay: opening and separation
+
+[DO NOT READ ALOUD: Start on slide 1.]
 
 Good morning. We are team vismAI. Our project, whospoke, identifies who spoke what and when in noisy Hindi–English conversations.
 
-We will show the actual saved outputs. This example combines real Hindi speech with market noise and overlapping voices. It is a simulated test conversation.
+This simulated test conversation combines real Hindi speech, overlapping voices and market noise.
 
-I handled Milestone 1, separation. These are two output clips from Conv-TasNet, taken from the same overlapping stretch.
+I handled Milestone One, separation. First, the mixed recording. Then, the two separated voices from an overlapping stretch within it.
 
-[Vismay: click Speaker A, then Speaker B, about 7.5 seconds each. If PC playback fails, say: “We'll play the same clips from the phone.” Keep slide 1 visible and play the downloaded clips from Darshan's phone, A then B. You own this fallback. Do not replay a clip that already worked. If the phone also fails, continue with the visible outputs.]
+[DO NOT READ ALOUD: Play Mixed recording first, about 18 seconds. Then play Speaker A and Speaker B, about 7.5 seconds each. If PC audio fails, read the fallback sentence below, then play the downloaded clips from YOUR OWN phone. Keep slide 1 visible. Do not replay a clip that already worked. Return here after playback. If both playback methods fail, continue immediately.]
 
-Across 245 test overlap regions, the separator improves SI-SDR by 9.6 decibels. That measures separation quality, not transcription accuracy. Darshan will show the speaker timeline.
+[DO NOT READ ALOUD: Say the following sentence ONLY if switching to phone audio.]
 
-### Darshan: 1:00–1:45
+We'll play the same clips from the phone.
 
-I handled Milestone 2: who spoke when. The table is directly from our timeline output. It assigns Speaker A from 26.85 to 31.75 seconds, then Speaker B, then Speaker A again.
+[DO NOT READ ALOUD: RESUME HERE after playback.]
 
-We detect speech, extract short-window voice embeddings, and cluster similar embeddings into speaker groups. The output is anonymous speaker labels with start and end times.
+Separation improves S-I-S-D-R by nine point six decibels across two hundred and forty-five test overlap regions. Darshan will explain the speaker timeline.
 
-Our spectral configuration has 20.3 percent diarization error. GMM also gets 20.3, while the complete pyannote baseline gets 18.4. So we do not claim to beat that baseline.
+## Slide 1 — Darshan: your M2 output
 
-In our chosen order, we diarize the original recording first, then separate the detected overlaps.
+I handled Milestone Two: who spoke when. This actual timeline labels Speaker A, then B, then A again, with start and end times.
 
-[Next slide.]
+We detect speech, extract short-window voice embeddings, and cluster similar embeddings into speaker groups. The labels are anonymous.
 
-## Slide 2: actual transcription output
+Our spectral configuration has twenty point three percent diarization error. The pyannote baseline gets eighteen point four; we do not beat it.
 
-### Darshan: 1:45–2:40
+Our design decision was to diarize first, then separate detected overlaps. The next slide shows the difference.
 
-Abhinav handled Milestone 3. These lines are copied from the saved Hinglish transcript, with the predicted speakers and timestamps. The system also saves Devanagari text, subtitles and JSON.
+[DO NOT READ ALOUD: Advance to slide 2. Vismay speaks next.]
 
-[Point to the first line, then the Speaker B reply. Do not read all three lines.]
+## Slide 2 — Vismay: transcript output
 
-For speech recognition alone, IndicConformer gets 21 percent word error on 400 Vaani clips, compared with 38 percent for IndicWav2Vec.
+Abhinav handled Milestone Three. These saved Hinglish lines retain speakers and timestamps. We also output Devanagari and subtitles.
 
-The full-pipeline comparison is a different test: 72 simulated conversations, about 83 minutes, across eight speaker groups. cpWER measures both word errors and speaker attribution errors.
+For speech recognition alone, IndicConformer gets twenty-one percent word error on four hundred Vaani clips, compared with thirty-eight percent for IndicWav2Vec.
 
-Separating first gives 55.8 percent cpWER. Diarizing first gives 49.5, and wins in 50 of the 72 conversations. Errors remain substantial, especially in assigning speech to the right speaker.
+Darshan will explain the full-pipeline comparison on the right.
 
-[Next slide.]
+## Slide 2 — Darshan: the main result
 
-## Slide 3: report output and next steps
+We tested both orders on the same seventy-two simulated conversations, about eighty-three minutes across eight speaker groups.
 
-### Darshan: 2:40–3:40
+Our metric, C-P-W-E-R, measures word errors and speaker attribution errors. Lower is better.
 
-Shrivaths handled Milestone 4. Airavata produces a report with a summary, keywords and translated dialogue. On the left are actual excerpts: the lost ID card, and the question about office hours.
+Separating first gives fifty-five point eight percent. Diarizing first gives forty-nine point five, and wins in fifty of the seventy-two conversations.
 
-The report keeps speaker labels and timestamps unchanged. But producing a report does not mean the report is fully reliable. On 63 evaluated conversations, transcript repair adds 0.9 cpWER points on average. No accepted action items remain in the 252 evaluated reports.
+The order matters. We implemented both and chose using measured outputs. Errors remain substantial; the problem is not solved.
 
-So the Stage-3 transcript remains the record, and the report is a reading aid that needs checking.
+[DO NOT READ ALOUD: Advance to slide 3. Vismay speaks next.]
 
-Our proposed next steps are to improve Hindi speaker embeddings, evaluate a larger LLM for action items, and retrain separation on Indian voices and noise. These are future experiments, not completed improvements. Thank you.
+## Slide 3 — Vismay: report output and its limits
 
-## Rehearsal and fallback
+Shrivaths handled Milestone Four. Airavata produces summaries, keywords and translated dialogue. These saved excerpts concern a lost ID card and office hours.
 
-- Vismay presents M1, then hands over on slide 1. Darshan presents M2 and narrates the M3/M4 results. Abhinav and Shrivaths answer questions about their stages.
-- Play only the two embedded separation clips during the talk. Their combined duration is 15 seconds. The older 18-second main clip is optional practice material, not part of this script.
-- Vismay owns the phone fallback: prepare and test both downloaded clips on Darshan's phone before the talk, keep them ready in A-then-B order, and handle playback if the PC fails. See [your M1 guide, section 10](M1_PREP_VISMAY.md#10-your-job-phone-audio-backup) for the checklist.
-- If you exceed four minutes, omit the sentence comparing GMM and pyannote, and shorten the output-format list to “text and subtitles.” Keep the result limitations.
-- The PDF is a static backup: audio does not play in it.
-- Say “error,” not “accuracy.” Say “simulated conversations made from real speech,” not “72 real conversations.”
-- Do not claim the team trained the pretrained models. Do not say the LLM fixes the transcript.
-- The current repository defines four milestones. There is no fifth milestone in this deck.
+Speaker labels and times stay unchanged. But transcript repair adds zero point nine C-P-W-E-R points on average across sixty-three conversations. No accepted action items remain in the two hundred and fifty-two evaluated reports.
+
+So the original transcript remains the record, and the report needs checking.
+
+## Slide 3 — Darshan: closing
+
+Our next steps are to improve Hindi speaker embeddings, evaluate a larger language model for action items, and retrain separation on Indian voices and noise.
+
+These are proposed experiments. Today we have shown every stage's output, the measured benefit of changing the order, and the remaining limitations. Thank you.
+
+[DO NOT READ ALOUD: End. Vismay answers M1 questions, Darshan M2, Abhinav M3 and Shrivaths M4.]
+
+## Before the talk — do not read aloud
+
+- Download the latest PPT, PDF and this script. Save the script for offline phone reading; do not rely on mobile internet.
+- Vismay independently downloads all three clips onto his own phone: [Mixed recording](../demo-video/whospoke_demo.mp4), [Speaker A](../demo-video/speaker_a.mp4), then [Speaker B](../demo-video/speaker_b.mp4). Test sound offline, disable unintended Bluetooth output, and rehearse returning to RESUME HERE. No coordination with Darshan is needed to obtain or play the files.
+- Use all three embedded clips in the numbered order. The mixed clip lasts about 18 seconds; each separated clip lasts about 7.5 seconds.
+- Practise the speaker switches once. They keep each person speaking in complete sections and let Darshan explain his own stage and the main result.
+- Darshan studies M2 only. For the result comparison, understand that both orders used the same cases and that cpWER includes speaker attribution. The closing does not require learning the other implementations.
+- Vismay studies M1 only for technical Q&A; the M3/M4 paragraphs above are the exact results narration. Abhinav and Shrivaths own deeper questions about those stages.
+- The PDF has no playable audio. Vismay can play the same phone clips alongside it.
 
 ## Sources
 

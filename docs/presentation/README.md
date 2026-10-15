@@ -6,7 +6,7 @@
 
 | Material | Link |
 |---|---|
-| PowerPoint with two embedded separation clips | [vismAI.pptx](2026-10-16/vismAI.pptx) |
+| PowerPoint with mixed input and two embedded separated-voice clips | [vismAI.pptx](2026-10-16/vismAI.pptx) |
 | Static PDF backup | [vismAI.pdf](2026-10-16/vismAI.pdf) |
 | Presenter script | [SCRIPT.md](2026-10-16/SCRIPT.md) |
 | Vismay: M1 and phone-audio fallback | [M1_PREP_VISMAY.md](2026-10-16/M1_PREP_VISMAY.md) |
@@ -14,7 +14,7 @@
 | Abhinav: M3 | [M3_PREP_ABHINAV.md](2026-10-16/M3_PREP_ABHINAV.md) |
 | Shrivaths: M4 | [M4_PREP_SHRIVATHS.md](2026-10-16/M4_PREP_SHRIVATHS.md) |
 
-Each person prepares their own milestone. Vismay presents the opening and M1; Darshan takes over for M2 and narrates the remaining results. Abhinav and Shrivaths handle technical questions on their stages. Vismay owns the phone-audio fallback using Darshan's phone.
+Each person prepares their own milestone. Both presenters read the script verbatim from their own phones. Vismay handles the opening/M1 and the M3/M4 output narration; Darshan handles M2, the Order A/B comparison and the closing. Abhinav and Shrivaths answer technical questions on their stages. Vismay independently downloads and plays backup audio on his own phone.
 
 ## Historical archive: 6 October 2026
 

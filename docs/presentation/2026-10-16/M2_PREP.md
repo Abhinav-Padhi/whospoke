@@ -182,7 +182,7 @@ Finish with **DER 20.3%, versus 26.2% when separating first**. If you draw a clu
 5. [src/whospoke/pipeline.py](../../../src/whospoke/pipeline.py): `_overlap_regions`, `_targeted_separation`.
 6. [src/whospoke/metrics.py](../../../src/whospoke/metrics.py): `der`, `cp_error`.
 
-The older [docs/explainers/stage2_diarization.md](../../explainers/stage2_diarization.md) is useful background, but use this guide's corrections for library reuse, tuned thresholds and overlap handling.
+The older `docs/explainers/stage2_diarization.md` (local-only background) is useful background, but use this guide's corrections for library reuse, tuned thresholds and overlap handling.
 
 ## 9. Final self-test
 

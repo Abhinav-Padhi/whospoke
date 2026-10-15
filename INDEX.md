@@ -22,6 +22,7 @@ Start with [README.md](README.md) (what this is, headline results, how to run it
 | File | Purpose |
 |---|---|
 | [Current presentation package](docs/presentation/2026-10-16/README.md) | **16 October, 11:00 AM:** three-slide PPT, PDF, script, individual preparation and phone-audio fallback |
+| [Data and slide sources](docs/presentation/2026-10-16/DATA_AND_SOURCES.md) | Plain-language provenance of clips, outputs, metrics, datasets and models |
 | [Presentation index and archive](docs/presentation/README.md) | Current package and preserved October 6 presentation versions |
 | [Vismay: M1 preparation](docs/presentation/2026-10-16/M1_PREP_VISMAY.md) | Separation, board explanation, questions and phone-audio responsibility |
 | [Darshan: M2 preparation](docs/presentation/2026-10-16/M2_PREP.md) | Diarization, exact selected settings, board explanation and questions |
