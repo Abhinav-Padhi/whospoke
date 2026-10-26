@@ -280,6 +280,7 @@ def _romanise_brahmic_word(word: str) -> str:
         units[-1][1] = ""
 
     out: list[str] = []
+    is_dravidian = any(base <= first_cp < base + 0x80 for base in (0x0B80, 0x0C00, 0x0C80, 0x0D00))
     for j, (c, v, nasal) in enumerate(units):
         if c is not None:
             out.append(c)
@@ -290,7 +291,13 @@ def _romanise_brahmic_word(word: str) -> str:
             out.append(v)
         if nasal:
             nxt = units[j + 1][0] if j + 1 < len(units) else None
-            out.append("m" if nasal == "n" and nxt in LABIALS else nasal)
+            if nasal == "n":
+                if nxt in LABIALS or (nxt is None and is_dravidian):
+                    out.append("m")
+                else:
+                    out.append("n")
+            else:
+                out.append(nasal)
     res = "".join(out)
     return res.replace("chchh", "chh").replace("chch", "cch")
 
@@ -298,6 +305,27 @@ def _romanise_brahmic_word(word: str) -> str:
 # -----------------------------------------------------------------------------
 # Perso-Arabic script romanisation (Urdu, Kashmiri, Sindhi)
 # -----------------------------------------------------------------------------
+_URDU_LEXICON: dict[str, str] = {
+    "شکریہ": "shukriya",
+    "سلام": "salaam",
+    "علیکم": "alaikum",
+    "کیسے": "kaise",
+    "کیا": "kya",
+    "نہیں": "nahin",
+    "ہاں": "haan",
+    "بہت": "bahut",
+    "آپ": "aap",
+    "تم": "tum",
+    "میں": "main",
+    "ہم": "hum",
+    "ہے": "hai",
+    "ہیں": "hain",
+    "تھا": "tha",
+    "تھی": "thi",
+    "تھے": "the",
+    "اچھا": "achha",
+}
+
 _ARABIC_LETTERS: dict[int, str] = {
     0x0622: "aa", 0x0627: "a", 0x0628: "b", 0x067E: "p", 0x062A: "t", 0x0679: "t",
     0x062B: "s", 0x062C: "j", 0x0686: "ch", 0x062D: "h", 0x062E: "kh",
@@ -313,15 +341,26 @@ _ARABIC_LETTERS: dict[int, str] = {
 
 def _romanise_arabic_word(word: str) -> str:
     """Romanise a Perso-Arabic word (Urdu, Kashmiri, Sindhi)."""
+    if word in _URDU_LEXICON:
+        return _URDU_LEXICON[word]
+    chars = list(word)
+    n = len(chars)
     out = []
-    for c in word:
+    for i, c in enumerate(chars):
         cp = ord(c)
+        if cp in (0x06C1, 0x0647) and i == n - 1 and n > 1:
+            out.append("a")
+            continue
+        if cp in (0x06CC, 0x064A) and i == n - 2 and ord(chars[i + 1]) in (0x06C1, 0x0647, 0x06BE):
+            out.append("iy")
+            continue
         if cp in _ARABIC_LETTERS:
             out.append(_ARABIC_LETTERS[cp])
         elif c.isascii():
             out.append(c)
     text = "".join(out)
     return text.replace("chchh", "chh").replace("chch", "cch")
+
 
 
 # -----------------------------------------------------------------------------

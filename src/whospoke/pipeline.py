@@ -87,7 +87,7 @@ class Result:
         return {"order": self.order, "language": self.language, "duration_s": self.duration_s,
                 "timings_s": self.timings, "gpu_peak_mb": self.gpu_peak_mb,
                 "speakers": self.diarization.speakers,
-                "lines": [asdict(l) for l in sorted(self.lines, key=lambda l: l.start)]}
+                "lines": [{**asdict(l), "latin": l.latin} for l in sorted(self.lines, key=lambda l: l.start)]}
 
     def save(self, out_dir: str | Path) -> Path:
         out = Path(out_dir)
