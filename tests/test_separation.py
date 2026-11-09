@@ -1,8 +1,6 @@
 """Window stitching and gain fitting of the separator, using a fake 'oracle' separator."""
 import numpy as np
-import pytest
 
-pytest.importorskip("torch")
 from whospoke.audio import SR
 from whospoke.metrics import pit_si_sdr
 from whospoke.separation import Separator

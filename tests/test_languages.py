@@ -12,18 +12,12 @@ import json
 import pytest
 
 from whospoke.languages import (
-    LANGUAGES,
-    LanguageInfo,
-    all_languages,
     detect_script,
     resolve_language,
     supported_codes,
-    supported_names,
 )
 from whospoke.hinglish import romanise
 from whospoke.llm_postprocess import (
-    CleanedLine,
-    PostProcessedReport,
     PostProcessor,
     StaticLLM,
     chunk_prompt,
@@ -161,16 +155,15 @@ def test_asr_language_routing_metadata():
     for code in supported_codes():
         info = resolve_language(code)
         assert info.conformer_code == code
-        if code in {"hi", "bn", "gu", "te", "or", "ta"}:
+        if code in {"hi", "bn", "gu", "or"}:
             assert info.wav2vec_repo is not None
             assert info.wav2vec_repo.startswith("ai4bharat/indicwav2vec")
         else:
             assert info.wav2vec_repo is None
 
 
+@pytest.mark.slow
 def test_indicconformer_accepts_all_scheduled_languages():
-    pytest.importorskip("torch")
-    pytest.importorskip("huggingface_hub")
     from whospoke.asr_backends import IndicConformerASR
 
     for code in ["hi", "bn", "ta", "te", "mr", "gu", "ur", "kn", "ml", "pa"]:
@@ -179,17 +172,16 @@ def test_indicconformer_accepts_all_scheduled_languages():
         assert asr.lang_info.code == code
 
 
+@pytest.mark.slow
 def test_indicwav2vec_language_support_and_error():
-    pytest.importorskip("torch")
-    pytest.importorskip("huggingface_hub")
     from whospoke.asr_backends import IndicWav2VecASR
 
-    for code in ["hi", "bn", "gu", "te", "or", "ta"]:
+    for code in ["hi", "bn", "gu", "or"]:
         asr = IndicWav2VecASR(language=code)
         assert asr.language == code
 
     # Language without CTC checkpoint should raise descriptive error
-    with pytest.raises(ValueError, match="no published IndicWav2Vec CTC checkpoint"):
+    with pytest.raises(ValueError, match="AI4Bharat does not provide a standalone IndicWav2Vec CTC model"):
         IndicWav2VecASR(language="ks")
 
 
@@ -198,8 +190,6 @@ def test_indicwav2vec_language_support_and_error():
 # =====================================================================
 
 def test_line_and_result_latin_property_and_export(tmp_path):
-    pytest.importorskip("torch")
-    pytest.importorskip("sklearn")
     from whospoke.diarization import Diarization, Turn
     from whospoke.pipeline import Line, Result
 

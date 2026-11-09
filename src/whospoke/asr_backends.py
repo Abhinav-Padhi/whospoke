@@ -6,7 +6,7 @@ Two pretrained AI4Bharat models are wrapped:
   (hybrid CTC/RNNT Conformer, exported as TorchScript preprocessor + ONNX graphs;
   supports all 22 official scheduled Indian languages).
 * :class:`IndicWav2VecASR` -- ``ai4bharat/indicwav2vec-*`` (wav2vec2 CTC,
-  greedy decoding, no LM; available for Hindi, Bengali, Gujarati, Telugu, Odia, Tamil).
+  greedy decoding, no LM; available for Hindi, Bengali, Gujarati, and Odia).
 
 Both take mono float32 audio (resampled to 16 kHz if needed), skip clips shorter
 than 0.1 s, split clips longer than ``max_chunk_s`` at low-energy points, and
@@ -173,8 +173,8 @@ class IndicConformerASR(_ASRBackend):
         import onnxruntime as ort
         from huggingface_hub import snapshot_download
 
-        lang_info = resolve_language(language)
-        self.language = lang_info.conformer_code
+        self.lang_info = resolve_language(language)
+        self.language = self.lang_info.conformer_code
         self.device = _resolve_device(device)
         self.decoding = decoding
         self.batch_size, self.max_chunk_s = batch_size, max_chunk_s
@@ -312,7 +312,7 @@ class IndicConformerASR(_ASRBackend):
 class IndicWav2VecASR(_ASRBackend):
     """AI4Bharat IndicWav2Vec (wav2vec2-large CTC) with greedy decoding.
 
-    Available for Hindi, Bengali, Gujarati, Telugu, Odia, and Tamil. For other
+    Available for Hindi, Bengali, Gujarati, and Odia. For other
     languages, use :class:`IndicConformerASR` which covers all 22 scheduled languages.
 
     Args:
@@ -333,14 +333,14 @@ class IndicWav2VecASR(_ASRBackend):
         from huggingface_hub import hf_hub_download
         from transformers import Wav2Vec2Config, Wav2Vec2ForCTC, Wav2Vec2Processor
 
-        lang_info = resolve_language(language)
-        if not lang_info.wav2vec_repo:
+        self.lang_info = resolve_language(language)
+        if not self.lang_info.wav2vec_repo:
             raise ValueError(
-                f"AI4Bharat does not provide a standalone IndicWav2Vec CTC model for {lang_info.name} ({lang_info.code}). "
-                f"Please use 'indicconformer' (IndicConformerASR), which supports all 22 Indian languages including {lang_info.name}."
+                f"AI4Bharat does not provide a standalone IndicWav2Vec CTC model for {self.lang_info.name} ({self.lang_info.code}). "
+                f"Please use 'indicconformer' (IndicConformerASR), which supports all 22 Indian languages including {self.lang_info.name}."
             )
-        self.repo_id = lang_info.wav2vec_repo
-        self.language = lang_info.code
+        self.repo_id = self.lang_info.wav2vec_repo
+        self.language = self.lang_info.code
         self._torch = torch
         self.device = _resolve_device(device)
         self.batch_size, self.max_chunk_s = batch_size, max_chunk_s

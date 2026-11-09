@@ -1,7 +1,6 @@
 import numpy as np
 import pytest
 
-pytest.importorskip("sklearn")
 from whospoke import clustering as clu
 
 

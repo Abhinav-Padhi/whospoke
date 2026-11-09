@@ -62,7 +62,6 @@ def test_real_backends_skip_short_inputs(cls, monkeypatch):
 
 
 def test_resampling_and_stereo():
-    pytest.importorskip("torch")
     stereo_8k = np.random.randn(8000, 2).astype(np.float32)  # 1 s, (T, C)
     mono = A._prepare(stereo_8k, 8000)
     assert mono.ndim == 1 and mono.dtype == np.float32 and len(mono) == SR
@@ -97,8 +96,6 @@ def utterances():
 
 @pytest.fixture(scope="module", params=["indicconformer-ctc", "indicconformer-rnnt", "indicwav2vec"])
 def backend(request):
-    pytest.importorskip("torch")
-    pytest.importorskip("huggingface_hub")
     if request.param == "indicwav2vec":
         asr = A.IndicWav2VecASR()
     else:

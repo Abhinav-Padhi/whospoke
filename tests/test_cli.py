@@ -5,6 +5,7 @@ import sys
 import numpy as np
 
 from whospoke import __main__ as cli
+from whospoke import separation
 from whospoke.audio import SR, load, save
 
 
@@ -19,9 +20,6 @@ class _HalfSeparator:
 
 
 def test_separate_writes_one_wav_per_track_without_clipping(tmp_path, monkeypatch):
-    import pytest
-    pytest.importorskip("torch")
-    from whospoke import separation
     t = np.arange(2 * SR) / SR
 
     wav = (0.8 * np.sin(2 * np.pi * 220 * t)).astype(np.float32)

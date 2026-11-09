@@ -206,7 +206,7 @@ LANGUAGES: dict[str, LanguageInfo] = {
         indicvoices_name="tamil",
         script="tamil",
         conformer_code="ta",
-        wav2vec_repo="ai4bharat/indicwav2vec_v1_tamil",
+        wav2vec_repo=None,
         latin_name="Tanglish",
     ),
     "te": LanguageInfo(
@@ -215,7 +215,7 @@ LANGUAGES: dict[str, LanguageInfo] = {
         indicvoices_name="telugu",
         script="telugu",
         conformer_code="te",
-        wav2vec_repo="ai4bharat/indicwav2vec_v1_telugu",
+        wav2vec_repo=None,
         latin_name="Teluglish",
     ),
     "ur": LanguageInfo(

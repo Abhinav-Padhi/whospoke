@@ -1,7 +1,6 @@
 import numpy as np
 import pytest
 
-pytest.importorskip("pandas")
 from whospoke.audio import SR
 from whospoke.corpora import Utterance
 from whospoke.synth import SynthConfig, overlap_stats, read_rttm, simulate, trim_silence

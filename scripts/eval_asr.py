@@ -94,7 +94,7 @@ def sample_sets(n: int, language: str = "hi", seed: int = 0) -> dict[str, pd.Dat
     else:
         sample_sets.vaani_all = pd.DataFrame()
 
-    iv_path = indicvoices_split_path(lang_info.code, "valid")
+    iv_path = RAW / "indicvoices" / indicvoices_split_path(lang_info.code, "valid")
     if not iv_path.exists():
         try:
             iv_path = fetch_indicvoices(lang_info.code, "valid")
@@ -106,7 +106,8 @@ def sample_sets(n: int, language: str = "hi", seed: int = 0) -> dict[str, pd.Dat
         iv = iv.iloc[rng.choice(len(iv), min(n, len(iv)), replace=False)].reset_index(drop=True)
         iv["audio_bytes"] = _take_audio([iv_path], "audio_filepath", [(0, r) for r in iv._row])
         iv["english"] = [{} for _ in range(len(iv))]
-        sets[f"indicvoices-valid-{lang_info.code}"] = iv
+        set_name = "indicvoices-valid" if lang_info.code == "hi" else f"indicvoices-valid-{lang_info.code}"
+        sets[set_name] = iv
     return sets
 
 
@@ -176,10 +177,26 @@ def main() -> None:
         pd.DataFrame(per_utt).to_csv(out / f"asr_comparison_utterances{suffix}.csv", index=False)
         selection_set = "vaani-test" if "vaani-test" in df.set.values else df.set.iloc[0]
         best = df[df.set == selection_set].sort_values("wer").iloc[0].model
-        summary = {"language": lang_info.code, "chosen_model": best, "selection_set": selection_set, "table": rows}
+        summary = {"chosen_model": best, "selection_set": selection_set}
+        if lang_info.code == "hi":
+            # Romaniser, on EVERY tagged English word in the Vaani test shards (its lexicon was mined from train only):
+            # does the Devanagari form come out in English spelling?
+            vaani = getattr(sample_sets, "vaani_all", pd.DataFrame())
+            pairs = []
+            if not vaani.empty and "text" in vaani.columns and "english" in vaani.columns:
+                pairs = [(t.split()[i], e) for t, en in zip(vaani.text, vaani.english) for i, e in en.items() if i < len(t.split())]
+            rom_acc = float(np.mean([english_norm(romanise_word(d)) == english_norm(e) for d, e in pairs])) if pairs else np.nan
+            summary["romaniser_english_spelling_acc"] = rom_acc
+            summary["romaniser_pairs"] = len(pairs)
+        else:
+            summary["language"] = lang_info.code
+        summary["table"] = rows
         (out / f"asr_comparison{suffix}.json").write_text(json.dumps(summary, indent=1), encoding="utf-8")
         print(df.round(4).to_string())
-        print(f"chosen for {lang_info.name}: {best}")
+        if lang_info.code == "hi":
+            print(f"chosen: {best} | romaniser English-spelling accuracy on Vaani test English words: {rom_acc:.1%} ({len(pairs)} words)")
+        else:
+            print(f"chosen for {lang_info.name}: {best}")
 
 
 
