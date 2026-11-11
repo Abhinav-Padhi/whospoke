@@ -1,0 +1,8 @@
+=== STATUS SNAPSHOT 2026-11-10T18:24:12Z ===
+evaluator: scripts/eval_postprocess.py --force --server-pid 759292 (DETACHED, still running)
+sys=groups0-6 (group7 excluded), systems=[reference,oracle-clean,oracle-mix,B-spectral], expected 252 pairs
+frozen revision b03fa93a833a (validator_rules_version 2)
+progress: 3/252 regenerated under new revision (ref 246s, oracle-clean 175s, oracle-mix 168s)
+throughput ~170s/report -> full 252 ~12h CPU; CANNOT complete within this session
+STATUS: BLOCKED-BY-TIME (full scored eval NOT complete). Prior artifacts preserved in pre_force/ (272 files + sha256 manifest)
+resume: the detached process continues; monitor: tail -f results/stage4_probe/2026-11-10_s4eval_r1/eval_stdout.log ; completion writes results/eval_postprocess.csv + eval_postprocess_summary.json (new canonical; old in pre_force + git)

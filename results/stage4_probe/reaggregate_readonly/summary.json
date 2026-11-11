@@ -1,0 +1,60 @@
+{
+  "regenerated_reports": 0,
+  "scheduled_jobs": 0,
+  "conversations": 63,
+  "systems": [
+    "reference",
+    "oracle-clean",
+    "oracle-mix",
+    "B-spectral"
+  ],
+  "prompt_schema_revision": "41b0cd20c01d",
+  "legacy_none_reports": 252,
+  "note": "read-only re-aggregation of existing cached reports; results/eval_postprocess.csv untouched; reuses eval helpers",
+  "per_system": {
+    "reference": {
+      "rows": 63,
+      "cpwer_raw": 0.0,
+      "cpwer_clean": 0.019,
+      "kw_true": 0.988,
+      "sum_true": 0.503,
+      "kw_f1": 1.0,
+      "sum_f1": 1.0,
+      "reports_with_actions": 0,
+      "total_actions": 0
+    },
+    "oracle-clean": {
+      "rows": 63,
+      "cpwer_raw": 0.1801,
+      "cpwer_clean": 0.1911,
+      "kw_true": 0.639,
+      "sum_true": 0.475,
+      "kw_f1": 0.171,
+      "sum_f1": 0.178,
+      "reports_with_actions": 0,
+      "total_actions": 0
+    },
+    "oracle-mix": {
+      "rows": 63,
+      "cpwer_raw": 0.3057,
+      "cpwer_clean": 0.3139,
+      "kw_true": 0.629,
+      "sum_true": 0.402,
+      "kw_f1": 0.096,
+      "sum_f1": 0.141,
+      "reports_with_actions": 0,
+      "total_actions": 0
+    },
+    "B-spectral": {
+      "rows": 63,
+      "cpwer_raw": 0.5185,
+      "cpwer_clean": 0.5275,
+      "kw_true": 0.605,
+      "sum_true": 0.371,
+      "kw_f1": 0.097,
+      "sum_f1": 0.165,
+      "reports_with_actions": 0,
+      "total_actions": 0
+    }
+  }
+}
