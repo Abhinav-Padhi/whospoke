@@ -19,6 +19,7 @@ from pathlib import Path
 import numpy as np
 
 from .audio import load, save
+from .languages import resolve_language
 from .llm_postprocess import (DEFAULT_BASE_URL, DEFAULT_CONTEXT, DEFAULT_MODEL, DEFAULT_TIMEOUT, LLMConnectionError,
                              PostProcessor)
 
@@ -51,6 +52,9 @@ def add_llm_args(parser: argparse.ArgumentParser) -> None:
 
 def build_postprocessor(args: argparse.Namespace, language: str | None = None) -> PostProcessor:
     lang = getattr(args, "language", None) or language or "hi"
+    if resolve_language(lang).code != "hi":
+        print(f"warning: Stage 4 uses Airavata, a Hindi model; a {resolve_language(lang).name} report is not "
+              "evaluated (D40)", file=sys.stderr)
     return PostProcessor(model=args.llm_model, base_url=args.llm_url, context_tokens=args.llm_context,
                          timeout_s=args.llm_timeout, json_schema=not args.llm_no_schema, language=lang)
 
@@ -114,7 +118,8 @@ def main() -> None:
     for stream in (sys.stdout, sys.stderr):
         if hasattr(stream, "reconfigure"):
             stream.reconfigure(encoding="utf-8", errors="replace")
-    ap = argparse.ArgumentParser(prog="whospoke", description="Who spoke what and when — multilingual Indian audio (22 languages).")
+    ap = argparse.ArgumentParser(prog="whospoke", description="Who spoke what and when — Hindi/Hinglish audio "
+                                 "(other Indian languages with --language; not evaluated).")
     sub = ap.add_subparsers(dest="cmd", required=True)
 
     run = sub.add_parser("run", help="process one audio file")

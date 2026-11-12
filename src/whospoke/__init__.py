@@ -1,5 +1,6 @@
-"""whospoke — a "who spoke what and when" pipeline for noisy, overlapping, code-switched Indian audio
-covering 22 regional languages, ending in an LLM-written report (separation, diarization, regional ASR, LLM post-processing)."""
+"""whospoke — a "who spoke what and when" pipeline for noisy, overlapping, code-switched Hindi/Hinglish audio,
+ending in an LLM-written report (separation, diarization, ASR, LLM post-processing). Stages 1–3 also run on the other
+Indian languages IndicConformer covers (``language=``), but only Hindi is evaluated (DECISIONS D4, D40)."""
 
 from .languages import LanguageInfo, resolve_language
 
