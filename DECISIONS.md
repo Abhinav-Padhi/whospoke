@@ -416,104 +416,72 @@ saved as safetensors under the data folder. Community safetensors uploads are no
 off the GPU and off the pipeline's critical path costs the live passes about half a second. In a rehearsal take,
 9 of 15 lines had English before Stop and all 16 by the end of the final pass.
 
-## D36 · Stage-4 evaluation cache identity now includes a prompt/schema revision
+## D36 · Stage-4 reports are cached by transcript and prompt revision
 **Decided:** 2026-11-10
-**Context:** `scripts/eval_postprocess.py` reused a cached Stage-4 report for an identical transcript keyed only on
-its content hash (`_fingerprint`); the model, prompts, schemas and code revision were not part of the key, so editing
-a prompt or schema would silently reuse reports made by the old ones (F8/§5 Task 7). The 252 scored reports
-(63 conversations × 4 systems, groups 0–6, group 7 excluded) were generated 2026-10-02/03 and predate any such id.
-**Choice:** `src/whospoke/llm_postprocess.py` gains `prompt_schema_revision()` — a stable 12-hex id hashed from the
-four prompts, every JSON schema they constrain, and the output-affecting constants (`MAX_LINES_PER_CHUNK`,
-`MAX_EDIT_RATIO`, `UNSPECIFIED`), exposed as `PROMPT_SCHEMA_REVISION`. Every report records it in
-`provenance.prompt_schema_revision` (and states it in the Markdown). The evaluator adds it to the cache key and to a
-`revision_matches(stored, current)` reuse gate; the per-run summary records it too. Original revision `41b0cd20c01d`;
-**superseded — see D38: the frozen revision is `b03fa93a833a`** once `validator_rules_version` folded into it.
-**Grandfathering:** a report with no recorded revision (`None`) — i.e. all 252 existing reports — is accepted, so this
-change never mass-regenerates or overwrites previously measured evidence; a *different* recorded revision forces a
-remake. Reusing the live cache schedules **0** jobs; `results/eval_postprocess.csv` is unchanged
-(sha256 `aba9b9f05960db7eaea9cb9d43bec37367262611cdc7518d5f7a8cf0d247997f`). Regressions are covered in
-`tests/test_llm_postprocess.py` (`test_prompt_schema_revision_is_stable_and_recorded`,
-`test_revision_changes_when_output_affecting_config_changes`, `test_revision_matches_gates_cache_reuse`).
-**Why:** makes cache reuse honor every output-affecting setting (D33) without discarding or recreating today's
-evidence; a future prompt/schema edit automatically invalidates the cache, so an evaluation always runs the code that
-produced the reports it scores.
+**Context:** `scripts/eval_postprocess.py` reuses the report of an identical transcript (Stage 4 is deterministic at
+temperature 0). The cache was keyed on the transcript alone, so after an edit to a prompt or a schema the old
+reports would still have been reused and scored as if they came from the new prompts.
+**Choice:** `llm_postprocess.prompt_schema_revision()` hashes everything in the module that changes the model's output
+without changing the transcript: the four prompts, every JSON schema, `MAX_LINES_PER_CHUNK`, `MAX_EDIT_RATIO`,
+`UNSPECIFIED` and `VALIDATOR_RULES_VERSION` (D38). The 12-character id (`PROMPT_SCHEMA_REVISION`) is written into
+every report's provenance and its Markdown, and into the run summary. The evaluator keys its cache on it, so an edit
+to a prompt or schema makes the cached reports stale and they are made again. A report written before the id existed
+is accepted as it is, so this change alone does not regenerate anything.
+**Why:** an evaluation must score reports made by the code it describes. Tests:
+`test_prompt_schema_revision_is_stable_and_recorded`, `test_revision_changes_when_output_affecting_config_changes`,
+`test_revision_matches_gates_cache_reuse`.
 
-## D37 · Stage-4 action items: cause found on group 7, no prompt change made
+## D37 · Action items: checked on group 7, prompts left as they are
 **Decided:** 2026-11-10
-**Context:** F2 — "weak/empty action-item extraction" (a few proposed actions across the 252 scored reports, all
-unsupported and dropped; the demo misses a clear request). Investigated on **group 7 only** (D32) with the real local
-Airavata server, recording what the model *proposes* before the Python grounding gate. No scored group 0–6 was used.
-**Finding:** on group-7 reference transcripts the model proposes **0** action items under the current prompt (3/3 dev
-conversations: `high_clean`, `high_market5`, `high_village10`) and the gate drops **0** — the gate is not the
-bottleneck, it works. Strengthening the action wording makes the model emit items, but at poor precision: owners that
-are not a speaker label (`"Madam"`) and a question-shaped non-action (`"Motorcade is moving, what is it?"`) that the
-token-overlap gate then accepts.
-**Choice:** **no prompt change.** Loosening the wording admits suggestions/questions/non-actions, which §2.6 forbids,
-and no minimal wording change demonstrably yields supported actions without that regression; zero supported actions
-is the correct safe outcome for Airavata. Added a regression test that pins the prompts to "explicit requests,
-instructions or promises only" so a future edit cannot silently broaden actions; the accept/reject gate cases stay
-covered by the existing tests.
-**Why:** guardrails and honesty (F2) over fuller-looking reports; the model's precision, not the prompt or the gate,
-limits action extraction. Evidence: `results/stage4_probe/actions_g07/findings.json` (group-7 dev only).
+**Context:** no action item survives in any of the 252 evaluation reports (audit finding F2). Either the model proposes
+none, or the checks drop them. This was tested with the real Airavata server on three group-7 conversations only
+(D32), recording what the model proposes before the checks.
+**Finding:** with the current prompts the model proposes no action items on any of the three, so the checks drop
+nothing: they are not the cause. With stronger wording the model does propose items, but bad ones: an owner that is not
+a speaker (`"Madam"`) and a question that the word-overlap check accepts (`"Motorcade is moving, what is it?"`).
+**Choice:** no prompt change. A test now pins the prompts to "explicit requests, instructions or promises only", so a
+later edit cannot quietly widen what counts as an action.
+**Why:** an empty action list is honest; a full one made of questions and suggestions is not. The limit is the 7B
+model's precision, not the prompt or the checks. Evidence: `results/stage4_probe/actions_g07/` (`findings.json`, the
+two probe scripts and their logs).
 
-## D38 · Stage-4 cache identity completed (model + context + validator version); action validator strengthened
+## D38 · The cache also checks model and context; questions and suggestions are not action items
 **Decided:** 2026-11-10
-**Context:** workflow §5 Task 7 step 4 requires cache identity to cover transcript content **and** every output-affecting
-setting. It had content + prompt/schema revision; it lacked model identity, model context and a code/validator version.
-Separately, the group-7 experiment (D37) showed the action gate could accept a question-shaped item.
-**Choice:** `scripts/eval_postprocess.py` now keys the report cache on
-`(content, PROMPT_SCHEMA_REVISION, model, context, system)` and gates reuse with
-`whospoke.llm_postprocess.cache_compatible` — a cached report is reused only for the same **model** and the same
-**context**; each report records `context_tokens` in provenance; and the revision now folds in a `validator_rules_version`
-(bumped to 2 when the grounding rules changed), so code edits invalidate the cache. `_actions` now rejects information
-questions, suggestions/hypotheticals and first-person wishes (`_is_non_commitment`) while keeping directives, promises,
-unspecified-owner requests and polite "Will you …?" requests. Current revision: `b03fa93a833a`.
-**Legacy grandfathering — safe, narrowly:** all 252 existing reports predate these fields; at the default run they stay
-compatible (recorded model = Airavata matches; unknown context grandfathered only at `DEFAULT_CONTEXT=4096`) and are
-reused (0 regenerated). A non-default context or a different model invalidates all 252. Verified on the live cache
-and unit-tested (`test_cache_compatible_requires_matching_model_context_and_revision`,
-`test_cache_compatible_grandfathers_legacy_only_at_default_context_and_same_model`,
+**Context:** D36 covers the prompts, but the model and its context length also change a report. The group-7 probe
+(D37) also showed the action check accepting a question.
+**Choice:**
+- *Cache.* The evaluator's key is (transcript, `PROMPT_SCHEMA_REVISION`, model, context, input), and
+  `cache_compatible()` gates every reuse. Each report records `context_tokens`. A report from before these fields
+  existed is reused only for the default model and the default context (4,096), the only setting it can have been
+  made with. The model is identified by its name (`--llm-model`); the server does not expose the file's hash, so a
+  different file under the same name needs `--force`.
+- *Action items.* `_actions` now also drops information questions ("…, what is it?"), suggestions and hypotheticals
+  ("Maybe…", "We should…") and first-person wishes ("I want…"). It keeps instructions ("Bring…"), promises
+  ("… will …"), items with an unspecified owner, and polite requests ("Will you…?"). This raised
+  `VALIDATOR_RULES_VERSION` to 2; the current revision is `b03fa93a833a`.
+**Why:** cached reports are reused only when nothing that changes their content has changed. An action list should
+hold only things someone was asked or promised to do. Tests: `test_cache_compatible_*`,
 `test_actions_reject_information_questions_suggestions_and_wishes`,
-`test_actions_keep_explicit_requests_commitments_and_polite_questions`).
-**Residual (documented):** model *file* bytes-hash is unavailable over the HTTP endpoint, so identity is the
-`--llm-model` alias (a changed file under the same alias needs `--force`); temperature (fixed 0) and
-threads/parallel/workers are per-run throughput, not per-report content. `tests/test_cli.py` and
-`tests/test_pipeline_integration.py` cannot be collected in this venv (missing `torch`/`pyarrow` — Stage-1–3 deps);
-reported environment-blocked, not a code failure. The real Airavata demo run still works and records the new
-revision/context (`results/stage4_probe/2026-11-10_recheck/`). The full 252-report scored evaluation is not run.
+`test_actions_keep_explicit_requests_commitments_and_polite_questions`.
 
-## D39 · Full 252-report scored evaluation completed (run `2026-11-10_s4eval_r1`) — and it did **not** predate the action validator
-**Decided:** 2026-11-11 (records the completed run)
-**What ran:** `PYTHONPATH=src venv/bin/python scripts/eval_postprocess.py --force --server-pid 759292`, logged to
-`results/stage4_probe/2026-11-10_s4eval_r1/eval_stdout.log`; configuration in
-`results/stage4_probe/2026-11-10_s4eval_r1/run_meta.json`. 63 conversations × 4 systems = **252 reports**, groups 0–6,
-group 7 excluded (D32). Real local Airavata `models/airavata-q4_k_m.gguf` (Q4_K‑Medium, 4,172,544,832 bytes) on the
-llama.cpp HTTP server, **CPU only** (`--gpu-layers 0 --ctx 4096 --threads 8 --parallel 1`), temperature 0, workers 1,
-llama.cpp `0.5.0-dev` built locally, Python 3.14.9 on Arch Linux. Elapsed **51,836.8 s (≈14.4 h)**; server peak RSS
-**5011.7 MB**. Started 2026‑11‑10T18:09:47Z and finished on 2026‑11‑11, so the 252 reports carry two `generated_at`
-dates (100 on 11‑10, 152 on 11‑11) — one run, not two. The 252 committed reports in `results/eval_postprocess/` and
-`results/eval_postprocess.csv` are this run's output; the previous generation is preserved unmodified in
-`results/stage4_probe/2026-11-10_s4eval_r1/pre_force/`.
-**Provenance — the load-bearing fact:** all 252 reports carry `prompt_schema_revision = b03fa93a833a`, the revision
-whose material includes `validator_rules_version = 2`, i.e. the question-shaped / suggestion / first-person-wish
-rejection in `_actions` was **active** while they were produced. **They therefore do NOT predate the action-extraction
-validator** — they exhibit it (0 action items survive across all 252; 39% of summaries use meta/self-referential
-language; 37% of the 1,090 keywords are verbatim transcript spans). `VALIDATOR_RULES_VERSION` was deliberately **not**
-bumped to 3: no validator behaviour changed since the evaluated state, so a bump would only have changed
-`PROMPT_SCHEMA_REVISION`, marked all 252 valid reports stale and forced the ~14.4 h regeneration that was explicitly
-out of scope. The validator-version mechanism itself is unchanged and tested.
-**Results (pooled, from these reports):** cpWER goes **up** on every system after post-processing —
-reference 0.0%→1.9%, oracle‑clean 18.0%→19.0%, oracle‑mix 30.6%→31.3%, B‑spectral 51.8%→52.7%. Keywords really said
-99% (reference) / 64–67% (noisy); summary words really said 37–56%; keyword F1 1.00 reference vs 0.11–0.12 noisy;
-summary F1 1.00 reference vs 0.17–0.21 noisy; RTF 2.3–3.6. The audit re-derived cpWER independently from the cached
-reports and it matched `eval_postprocess.csv` exactly, so the aggregate is traceable to these reports.
-**What this supersedes (history kept, not rewritten):** D36's "the 252 scored reports … were generated 2026‑10‑02/03"
-and D38's "all 252 existing reports predate these fields … reused (0 regenerated)" and "the full 252‑report scored
-evaluation is not run" described the state *before* this `--force` run. As of this run the committed 252 reports **do**
-carry `prompt_schema_revision` and `context_tokens`, and the scored evaluation **has** run.
-**Also noted:** the three tracked summaries `results/eval_postprocess_summary_g00_g01_cloud.json`,
-`…_g02_g03_laptop.json` and `…_g04_g05_g06_laptop.json` are earlier **separate machine runs** (cloud and laptop) and
-are not the metrics for this CSV; the per-run summary for r1 is `results/eval_postprocess_summary.json`, which is
-git-ignored and overwritten by design (D33). Run metadata lives in `results/stage4_probe/2026-11-10_s4eval_r1/`.
-**Why:** the scored evaluation done with the frozen implementation, on the real server, with audit follows — recorded
-honestly with its limitations rather than as a success story.
+## D39 · All 252 Stage-4 reports made again, on one machine, with the current code
+**Decided:** 2026-11-11
+**Context:** the scored reports were made in October, before D36–D38, and on two machines (groups 0–1 on a cloud CPU,
+groups 2–6 on the laptop GPU; D33).
+**What ran:** `python scripts/eval_postprocess.py --force` (run `2026-11-10_s4eval_r1`): 63 conversations × 4 inputs =
+252 reports, groups 0–6 (group 7 excluded, D32), revision `b03fa93a833a`. The model was Airavata Q4_K_M on llama.cpp,
+on a Linux PC, CPU only (`--gpu-layers 0 --ctx 4096 --threads 8 --parallel 1`), at temperature 0, one report at a
+time. It took 14.4 hours (51,837 s), and the server's peak memory was 5.0 GB. The run started on 10 November and ended on
+11 November, so the reports carry both dates. All 252 record the revision and context. Re-scoring them with the code in
+this repository reproduces `results/eval_postprocess.csv` exactly, and a new evaluation run would remake none of them. The
+earlier reports, their CSV and their three run summaries are in git at commit `df497d8`.
+**Result:** the conclusions are unchanged. cpWER after the repair moved by at most 0.1 points; the report measures
+moved by a few points (keywords really said, full pipeline: 60 → 64 %; summary words really said, true transcript:
+50 → 56 %).
+- cpWER after the repair: true transcript 0.0 → 1.9 %, clean voices 18.0 → 19.0 %, noisy mixture 30.6 → 31.3 %,
+  full pipeline 51.8 → 52.7 %. The repair still adds errors on every input.
+- Still no action items. The model proposed 4, all on the full pipeline, and all were dropped.
+- The run's timing summary is `results/eval_postprocess_summary_g00_…_g06_linux-cpu.json`, and the run's command,
+  configuration and log are in `results/stage4_probe/2026-11-10_s4eval_r1/`.
+**Why:** all scored reports now come from one machine, one build and the code in the repository. So the CPU-vs-GPU
+caveat of D33 (and `results/crosscheck_g00_gpu/`, which compares the October reports) no longer applies to them.

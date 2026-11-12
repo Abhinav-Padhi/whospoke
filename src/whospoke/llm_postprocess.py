@@ -536,11 +536,11 @@ def cache_compatible(provenance: dict | None, *, sha256: str | None = None, mode
     """May a cached report (its ``provenance`` dict) be reused for a run made with ``sha256`` (the current
     transcript fingerprint), ``model`` and ``context``?
 
-    Completes the Stage-4 cache identity used by ``scripts/eval_postprocess.py`` (workflow \u00a75 Task 7): beyond the
+    Completes the Stage-4 cache identity used by ``scripts/eval_postprocess.py`` (D38): beyond the
     transcript content and the prompt/schema/validator revision, a report is reusable only for the same **model
     identity** and the same **model context**. A dimension that was never recorded (a report written before we
-    recorded it) is grandfathered only at the value it was certainly made with \u2014 model unchanged, context equal to
-    ``DEFAULT_CONTEXT`` \u2014 so today's evidence is reused as-is, but a run with a different model or a non-default
+    recorded it) is grandfathered only at the value it was certainly made with (model unchanged, context equal to
+    ``DEFAULT_CONTEXT``), so today's evidence is reused as-is, but a run with a different model or a non-default
     context never reuses an unknown-configuration report (it is regenerated). Any recorded dimension that differs
     makes it stale. (Model *file* bytes are not available over the HTTP API; the alias is the identity the evaluator
     passes, and ``--force`` covers a changed file under the same alias.)
@@ -881,7 +881,7 @@ class PostProcessor:
 
     def _actions(self, value: Any, lines: dict[int, CleanedLine], owners: set[str]) -> list[ActionItem]:
         """Keep an action only if its owner exists, it cites real lines, it shares a word with those lines, and it
-        is a genuine request/instruction/promise \u2014 not an information question or a suggestion/wish (\u00a72.6)."""
+        is a genuine request, instruction or promise, not an information question, a suggestion or a wish (D38)."""
         out: list[ActionItem] = []
         for item in _as_list(value):
             if not isinstance(item, dict):
@@ -928,7 +928,7 @@ def _content_tokens(text: str) -> list[str]:
     return [t for t in _tokens(text) if len(t) >= 3 and t not in _STOP]
 
 
-# Hedges / suggestions / hypotheticals / first-person wishes: not an explicit request, instruction or promise (§2.6).
+# Hedges / suggestions / hypotheticals / first-person wishes: not an explicit request, instruction or promise (D38).
 _NONCOMMIT_LEAD = (
     "maybe ", "perhaps ", "probably ", "possibly ", "i think ", "i guess ", "i believe ",
     "we could ", "we might ", "we may ", "we should ", "should we ", "i could ", "i might ",
@@ -939,10 +939,10 @@ _Q_START = ("is ", "are ", "was ", "were ", "do ", "does ", "did ")   # copula/d
 
 
 def _is_non_commitment(text: str) -> bool:
-    """True when an action item is not an explicit request, instruction or promise (\u00a72.6): an information
+    """True when an action item is not an explicit request, instruction or promise (D38): an information
     question, a suggestion/hypothetical, or a first-person wish. Directives ("Bring X"), commitments ("S will do
     X") and polite requests ("Will you bring X?") are NOT matched, so legitimate items survive. An item this
-    rejects is dropped and counted \u2014 never invented; a wh-question or copula/do question is information-seeking,
+    rejects is dropped and counted, never invented; a wh-question or copula/do question is information-seeking,
     not something to do.
     """
     low = text.strip().lower()
@@ -950,7 +950,7 @@ def _is_non_commitment(text: str) -> bool:
         return True
     if low.endswith("?") and (_Q_WORD.search(low) or low.startswith(_Q_START)):
         return True                      # information question ("Motorcade is moving, what is it?")
-    return low.startswith(_NONCOMMIT_LEAD)   # suggestion/hypothetical/wish ("Maybe we should\u2026", "I want a car")
+    return low.startswith(_NONCOMMIT_LEAD)   # suggestion/hypothetical/wish ("Maybe we should...", "I want a car")
 
 
 def _tokens(text: str) -> list[str]:

@@ -579,7 +579,7 @@ def test_action_must_share_a_word_with_its_evidence():
 
 def test_action_prompts_allow_only_explicit_requests_not_suggestions_or_questions():
     # The Python gate checks owner/evidence/overlap but cannot tell a request from a question; the PROMPTS are
-    # what exclude suggestions, questions and topics from action items (F2 / §5 Task 6). Guard that wording so a
+    # what exclude suggestions, questions and topics from action items (F2, D37). Guard that wording so a
     # future change cannot silently broaden actions to non-commitments. Explicit requests / instructions /
     # promises only; owner is a speaker label or "unspecified".
     for p in (lp.CHUNK_PROMPT, lp.SYNTHESIS_PROMPT):
@@ -591,7 +591,7 @@ def test_action_prompts_allow_only_explicit_requests_not_suggestions_or_question
 
 def test_actions_reject_information_questions_suggestions_and_wishes():
     # Well-formed on every other axis (valid owner, real line, tokens overlap with the cited line) but NOT an
-    # explicit request/instruction/promise (§2.6). Each is crafted to pass owner/line/overlap, so only the new
+    # explicit request/instruction/promise (D38). Each is crafted to pass owner/line/overlap, so only the new
     # rule drops it; chunk_reply carries no actions so nothing is pulled in as a fallback.
     synth = synthesis_reply(actions=[
         {"owner": "Speaker_A", "action": "Aadhaar card, what is it used for?", "lines": [2]},   # information question

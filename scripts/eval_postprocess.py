@@ -138,8 +138,8 @@ def main() -> None:
     cache.mkdir(parents=True, exist_ok=True)
     OpenAICompatibleLLM(args.llm_url, args.llm_model).ping()
     rss = RSSSampler(args.server_pid)
-    # Cache identity = transcript content AND every output-affecting setting the evaluator can vary (workflow
-    # §5 Task 7): _fingerprint of the lines, prompt/schema/validator revision, MODEL identity, MODEL context, and
+    # Cache identity = transcript content AND every output-affecting setting the evaluator can vary (D36,
+    # D38): _fingerprint of the lines, prompt/schema/validator revision, MODEL identity, MODEL context, and
     # the input system. Temperature (fixed 0 here) and workers/parallel affect speed, not one report's content.
     by_hash = {}
     file_prov = {}                             # (cid, system) -> the cached report's provenance, for the reuse gate
