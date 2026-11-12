@@ -9,7 +9,7 @@ Start with [README.md](README.md) (what this is, headline results, how to run it
 | 1 | [README.md](README.md) | What the project does, the headline numbers, how to install and run it |
 | 2 | [docs/RESULTS.md](docs/RESULTS.md) | Every result, explained in plain English, with the evidence for each design choice |
 | 3 | [DEVIATIONS.md](DEVIATIONS.md) | Every place we differ from the professor's proposal, and why |
-| 4 | [DECISIONS.md](DECISIONS.md) | Every judgement call (D1–D35), recorded as it was made |
+| 4 | [DECISIONS.md](DECISIONS.md) | Every judgement call (D1–D39), recorded as it was made |
 | 5 | [docs/PIPELINE.md](docs/PIPELINE.md) | Technical reference: how each stage works, stage by stage |
 | 6 | [docs/MILESTONE4.md](docs/MILESTONE4.md) | Stage 4 in full: running the LLM, the report, the prompts, the guardrails, settings |
 | 7 | [docs/RESULTS_TABLES.md](docs/RESULTS_TABLES.md) | Raw result tables with 95 % confidence intervals (generated, not hand-written) |
@@ -32,6 +32,7 @@ Start with [README.md](README.md) (what this is, headline results, how to run it
 | [docs/team/WHATSAPP_MESSAGE.md](docs/team/WHATSAPP_MESSAGE.md) | The message that split the mid-sem review tasks (sent; kept as written) |
 | [docs/team/RED_TEAM_AUDIT_PROMPT.md](docs/team/RED_TEAM_AUDIT_PROMPT.md) | Prompt for the independent audit (output → `audit/RED_TEAM_AUDIT.md`) |
 | [docs/team/EMAIL_TO_PROFESSOR.md](docs/team/EMAIL_TO_PROFESSOR.md) | Draft email flagging the two design decisions before the review |
+| [docs/team/STAGE4_WORKFLOW.md](docs/team/STAGE4_WORKFLOW.md), [STAGE4_AGENT_PROMPT.md](docs/team/STAGE4_AGENT_PROMPT.md) | The plan and instructions the November Stage-4 work followed (D36–D39); kept for the record |
 | [audit/RED_TEAM_AUDIT.md](audit/RED_TEAM_AUDIT.md) | The red-team audit: every finding with its evidence and status, and the 10 hardest examiner questions |
 | [notebooks/02_walkthrough.ipynb](notebooks/02_walkthrough.ipynb) | Run all four stages on one conversation, in Colab or locally |
 | [notebooks/01_benchmark.ipynb](notebooks/01_benchmark.ipynb) | Speed, memory and model-size benchmark of every stage (the proposal's "benchmarking notebook") |
@@ -107,9 +108,10 @@ to end, including the Stage-4 LLM if its server is running.
 | `eval_test_indicconformer.csv` | Every system × every test conversation |
 | `eval_test_indicconformer/*.json` | Every system's full transcript for every test conversation |
 | `figures/` | Figures used in RESULTS.md and the slides |
-| `eval_postprocess.csv`, `eval_postprocess/*.json`, `eval_postprocess_summary_g*.json` | Stage 4 on the 63 test conversations: scores per conversation, every report, and the settings, machine and cost of each run |
+| `eval_postprocess.csv`, `eval_postprocess/*.json`, `eval_postprocess_summary_g*.json` | Stage 4 on the 63 test conversations: scores per conversation, every report, and the settings, machine and cost of the run (D39) |
+| `stage4_probe/` | Evidence for D37–D39: the full run's command and log, two real end-to-end report runs, and the group-7 action-item probe |
 | `LAPTOP_RUN_REPORT.md` | How the Stage-4 runs on the laptop GPU went: GPU layers, speed, what went wrong |
-| `crosscheck_g00_gpu/` | Test group 0's Stage-4 reports made again on the GPU and compared with the CPU-made ones: the conclusions do not depend on the machine (D33, audit F12) |
+| `crosscheck_g00_gpu/` | Test group 0's October Stage-4 reports made again on the GPU and compared with the CPU-made ones (both kept there): the conclusions do not depend on the machine (D33, audit F12) |
 | `speaker_count_test.{csv,json}` | Diarization error with the speaker count found automatically, given, or given only when the automatic count differs (the live demo's setting) |
 | `benchmark_{stages,scaling,llm}.csv` | Speed and memory per stage (from the benchmark notebook) |
 | `demo/` | Example output of one full run (timeline, transcripts, subtitles, Stage-4 report) |
