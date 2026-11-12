@@ -46,7 +46,7 @@ are in [docs/RESULTS.md](docs/RESULTS.md).
 | 1 · Separation | Conv-TasNet: +9.6 dB on overlaps. With the true timeline, splicing separated overlaps cuts heavy-overlap transcript errors from 35.5 % to 27.6 % |
 | 2 · Diarization | Our spectral clustering: DER 20.3 %. GMM: 20.3 %. Off-the-shelf pyannote 3.1: 18.4 %. Ours and pyannote are within error bars |
 | 3 · Transcription | IndicConformer: 21.0 % WER on real-world Vaani audio, vs 38.0 % for IndicWav2Vec. 78 % of English words inside Hindi recognised. 82 % of them spelled correctly in the Hinglish output. Same ranking on a Nirantar Hindi sample (11.0 % vs 30.2 %) |
-| 4 · LLM report | Airavata (4-bit, local; runs fully on the 6 GB GPU) writes the report, but its "repair" does not fix the transcript: on the full pipeline 51.8 % → 52.8 % (+0.9 points, CI +0.8 to +1.1; 63 conversations, better in 1, worse in 50). 60 % of its keywords were really said (99 % from the true transcript). It extracts no action items. Speakers and times pass through unchanged |
+| 4 · LLM report | Airavata (4-bit, local; runs fully on the 6 GB GPU) writes the report, but its "repair" does not fix the transcript: on the full pipeline 51.8 % → 52.7 % (+0.9 points, CI +0.7 to +1.1; 63 conversations, better in 1, worse in 48). 64 % of its keywords were really said (99 % from the true transcript). It extracts no action items. Speakers and times pass through unchanged |
 
 ![Order A vs Order B](results/figures/order_A_vs_B.png)
 

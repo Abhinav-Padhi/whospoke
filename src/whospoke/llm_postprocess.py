@@ -50,6 +50,8 @@ DEFAULT_TIMEOUT = int(os.getenv("WHOSPOKE_LLM_TIMEOUT", "900"))      # a 7B mode
 MAX_LINES_PER_CHUNK = 6         # with longer lists Airavata's translations drift onto neighbouring lines (D32)
 MAX_EDIT_RATIO = 0.5            # a repair may change at most half of a line's characters (D29)
 UNSPECIFIED = "unspecified"     # action-item owner when the transcript does not say who must act
+VALIDATOR_RULES_VERSION = 2     # bump when the Python grounding rules change (part of the cache-identity revision):
+                                # 1 = pre-checks; 2 = adds question-shaped / non-commitment action rejection
 
 
 def system_prompt(lang: LanguageInfo | str = "hi") -> str:
@@ -355,6 +357,7 @@ class PostProcessedReport:
     pipeline_order: str | None = None
     source_audio_duration_s: float | None = None
     language: str = "hi"
+    context_tokens: int | None = None      # model context the report was made with (part of cache identity)
 
     @property
     def uncertain_lines(self) -> list[int]:
@@ -380,6 +383,8 @@ class PostProcessedReport:
                 "generated_at_utc": self.generated_at_utc,
                 "pipeline_order": self.pipeline_order,
                 "source_audio_duration_s": self.source_audio_duration_s,
+                "prompt_schema_revision": PROMPT_SCHEMA_REVISION,
+                "context_tokens": self.context_tokens,
             },
         }
 
@@ -434,6 +439,7 @@ class PostProcessedReport:
                 f"- Language: {lang_info.name} (`{self.language}`).",
                 f"- Model: `{self.llm_model}`, {d.llm_calls} calls, {d.llm_seconds:.0f} s"
                 f"{', JSON schema enforced by the server' if d.schema_enforced else ''}.",
+                f"- Prompt/schema revision: `{PROMPT_SCHEMA_REVISION}`.",
                 f"- Guardrails: {d.lines_changed} lines repaired, {d.lines_reverted} over-edited repairs reverted, "
                 f"{d.lines_restored} skipped lines restored, {d.keywords_dropped} ungrounded keywords and "
                 f"{d.actions_dropped} unsupported action items dropped.",
@@ -519,6 +525,76 @@ MERGE_SCHEMA = {"type": "object", "properties": {"summary": {"type": "string", "
                 "required": ["summary"], "additionalProperties": False}
 
 
+# ============================================== prompt/schema revision (cache identity for evaluation)
+def prompt_schema_revision() -> str:
+    """Stable id for everything here that changes the model's output *without* changing the transcript: the four
+    prompts, every JSON schema they constrain, and the hard behaviour constants (Stage-4 cache identity, D33/F8).
+
+    ``scripts/eval_postprocess.py`` keys its report cache on the transcript **and** this id, so editing a prompt,
+    schema or these constants here automatically invalidates cached reports; identical transcripts keep sharing one
+    report only while this id is unchanged. Temperature 0 makes each revision deterministic for a given server/model.
+    """
+    material = {"system_prompt": SYSTEM_PROMPT, "chunk_prompt": CHUNK_PROMPT,
+                "synthesis_prompt": SYNTHESIS_PROMPT, "merge_prompt": MERGE_PROMPT,
+                "action_schema": _ACTION_SCHEMA, "synthesis_schema": SYNTHESIS_SCHEMA, "merge_schema": MERGE_SCHEMA,
+                # chunk_schema() varies with the lines; a fixed probe chunk pins its fixed structure and caps
+                "chunk_schema": chunk_schema([{"line_id": 0, "text": "त"}]),
+                "max_lines_per_chunk": MAX_LINES_PER_CHUNK, "max_edit_ratio": MAX_EDIT_RATIO,
+                "unspecified": UNSPECIFIED, "validator_rules_version": VALIDATOR_RULES_VERSION}
+    blob = json.dumps(material, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(blob.encode("utf-8")).hexdigest()[:12]
+
+
+def revision_matches(stored: str | None, current: str | None = None) -> bool:
+    """May a cached report recorded under ``stored`` be reused for code at ``current`` (default: this module)?
+
+    ``None`` is a report written before prompt/schema revisions were recorded: it is grandfathered, so a fresh
+    evaluation never silently regenerates (and overwrites) previously measured evidence. Any *different* recorded
+    revision returns False — those prompts/schemas differ, so that report must be remade rather than reused.
+    """
+    return stored is None or stored == (PROMPT_SCHEMA_REVISION if current is None else current)
+
+
+def cache_compatible(provenance: dict | None, *, sha256: str | None = None, model: str | None = None,
+                     context: int | None = None) -> bool:
+    """May a cached report (its ``provenance`` dict) be reused for a run made with ``sha256`` (the current
+    transcript fingerprint), ``model`` and ``context``?
+
+    Completes the Stage-4 cache identity used by ``scripts/eval_postprocess.py`` (D38): beyond the
+    transcript content and the prompt/schema/validator revision, a report is reusable only for the same **model
+    identity** and the same **model context**. A dimension that was never recorded (a report written before we
+    recorded it) is grandfathered only at the value it was certainly made with (model unchanged, context equal to
+    ``DEFAULT_CONTEXT``), so today's evidence is reused as-is, but a run with a different model or a non-default
+    context never reuses an unknown-configuration report (it is regenerated). Any recorded dimension that differs
+    makes it stale. (Model *file* bytes are not available over the HTTP API; the alias is the identity the evaluator
+    passes, and ``--force`` covers a changed file under the same alias.)
+    """
+    prov = provenance or {}
+    rev = prov.get("prompt_schema_revision")
+    if rev is not None and rev != PROMPT_SCHEMA_REVISION:
+        return False
+    if sha256 is not None and prov.get("source_sha256") != sha256:
+        return False          # a report made from a different transcript is stale even if id/system/model/ctx match
+    if model is not None:
+        m = prov.get("llm_model")
+        if m is not None:
+            if m != model:
+                return False
+        elif model != DEFAULT_MODEL:      # identity never recorded: grandfather only for the default model
+            return False
+    if context is not None:
+        c = prov.get("context_tokens")
+        if c is not None:
+            if c != context:
+                return False
+        elif context != DEFAULT_CONTEXT:
+            return False
+    return True
+
+
+# PROMPT_SCHEMA_REVISION is computed further down, after _max_en, so chunk_schema() is fully resolved when it runs.
+
+
 _INDIC_SCRIPTS = re.compile(r"[\u0600-\u06ff\u0900-\u0d7f\u1c50-\u1c7f]")
 _DEVANAGARI = _INDIC_SCRIPTS
 
@@ -526,6 +602,9 @@ _DEVANAGARI = _INDIC_SCRIPTS
 def _max_en(text: str) -> int:
     """Longest acceptable English translation of a line: English is rarely more than ~1.5× the Indic text."""
     return 2 * len(text) + 30
+
+
+PROMPT_SCHEMA_REVISION = prompt_schema_revision()
 
 
 # ====================================================================== token budget
@@ -624,6 +703,7 @@ class PostProcessor:
             pipeline_order=transcript.get("order"),
             source_audio_duration_s=transcript.get("duration_s"),
             language=self.language,
+            context_tokens=self.context_tokens,
         )
 
     # ------------------------------------------------------------------ LLM calls
@@ -832,7 +912,8 @@ class PostProcessor:
         return out
 
     def _actions(self, value: Any, lines: dict[int, CleanedLine], owners: set[str]) -> list[ActionItem]:
-        """Keep an action only if its owner exists, it cites real lines, and it shares a word with those lines."""
+        """Keep an action only if its owner exists, it cites real lines, it shares a word with those lines, and it
+        is a genuine request, instruction or promise, not an information question, a suggestion or a wish (D38)."""
         out: list[ActionItem] = []
         for item in _as_list(value):
             if not isinstance(item, dict):
@@ -840,6 +921,9 @@ class PostProcessor:
             owner = _text(item.get("owner"))
             owner = UNSPECIFIED if owner.lower() in ("", UNSPECIFIED, "unknown", "none") else owner
             action = _text(item.get("action"))
+            if not action or _is_non_commitment(action):
+                self.diag.actions_dropped += 1
+                continue
             ids = []
             for x in _as_list(item.get("lines", item.get("evidence_line_ids"))):
                 try:
@@ -874,6 +958,31 @@ _STOP = {
 def _content_tokens(text: str) -> list[str]:
     """Tokens of at least 3 characters that are not stop words: the words that carry content."""
     return [t for t in _tokens(text) if len(t) >= 3 and t not in _STOP]
+
+
+# Hedges / suggestions / hypotheticals / first-person wishes: not an explicit request, instruction or promise (D38).
+_NONCOMMIT_LEAD = (
+    "maybe ", "perhaps ", "probably ", "possibly ", "i think ", "i guess ", "i believe ",
+    "we could ", "we might ", "we may ", "we should ", "should we ", "i could ", "i might ",
+    "i want ", "i need ", "i wish ", "i would like ", "i'd like ",
+)
+_Q_WORD = re.compile(r"\b(what|which|why|when|where|who|whom|how)\b", re.I)
+_Q_START = ("is ", "are ", "was ", "were ", "do ", "does ", "did ")   # copula/do information-questions, NOT aux requests
+
+
+def _is_non_commitment(text: str) -> bool:
+    """True when an action item is not an explicit request, instruction or promise (D38): an information
+    question, a suggestion/hypothetical, or a first-person wish. Directives ("Bring X"), commitments ("S will do
+    X") and polite requests ("Will you bring X?") are NOT matched, so legitimate items survive. An item this
+    rejects is dropped and counted, never invented; a wh-question or copula/do question is information-seeking,
+    not something to do.
+    """
+    low = text.strip().lower()
+    if not low:
+        return True
+    if low.endswith("?") and (_Q_WORD.search(low) or low.startswith(_Q_START)):
+        return True                      # information question ("Motorcade is moving, what is it?")
+    return low.startswith(_NONCOMMIT_LEAD)   # suggestion/hypothetical/wish ("Maybe we should...", "I want a car")
 
 
 def _tokens(text: str) -> list[str]:
@@ -964,4 +1073,5 @@ __all__ = [
     "LLMReply", "LLMBackend", "OpenAICompatibleLLM", "StaticLLM", "CleanedLine", "ActionItem", "Diagnostics",
     "PostProcessedReport", "PostProcessor", "parse_json_object", "chunk_schema", "estimate_tokens",
     "system_prompt", "chunk_prompt",
+    "prompt_schema_revision", "PROMPT_SCHEMA_REVISION", "revision_matches", "cache_compatible",
 ]
